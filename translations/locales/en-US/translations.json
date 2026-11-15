@@ -623,6 +623,7 @@
     "AddToCollectionOverlayTitle": "Add to collection",
     "TableSummary": "table containing all saved projects",
     "HeaderName": "Sketch",
+    "HeaderP5Version": "Version",
     "HeaderCreatedAt": "Date Created",
     "HeaderCreatedAt_mobile": "Created",
     "HeaderUpdatedAt": "Date Updated",

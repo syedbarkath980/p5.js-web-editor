@@ -8,7 +8,8 @@ const buildProjectsUrl = (username, options = {}) => {
     limit = 10,
     sortField = 'updatedAt',
     sortDir = 'desc',
-    q = ''
+    q = '',
+    p5Version = ''
   } = options;
 
   const base = username
@@ -26,6 +27,10 @@ const buildProjectsUrl = (username, options = {}) => {
 
   if (trimmed) {
     params.set('q', trimmed);
+  }
+
+  if (p5Version) {
+    params.set('p5Version', p5Version);
   }
 
   return `${base}?${params.toString()}`;

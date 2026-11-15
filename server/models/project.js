@@ -43,6 +43,7 @@ const projectSchema = new Schema(
       enum: ['Private', 'Public'],
       default: 'Public'
     },
+    p5Version: { type: String },
     slug: { type: String, immutable: true }
   },
   { timestamps: true }
@@ -93,7 +94,7 @@ projectSchema.statics.getProjectsForUserId = async function getProjectsForUserId
   return project
     .find({ user: userId })
     .sort('-createdAt')
-    .select('name files id createdAt updatedAt')
+    .select('name files id createdAt updatedAt p5Version')
     .exec();
 };
 

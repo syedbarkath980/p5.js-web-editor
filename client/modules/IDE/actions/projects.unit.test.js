@@ -12,11 +12,13 @@ import {
 } from '../../../testData/testReduxStore';
 
 const mockStore = configureStore([thunk]);
+let lastSearchParams;
 
 const server = setupServer(
-  rest.get(`/${initialTestState.user.username}/projects`, (req, res, ctx) =>
-    res(ctx.json(mockProjects))
-  )
+  rest.get(`/${initialTestState.user.username}/projects`, (req, res, ctx) => {
+    lastSearchParams = req.url.searchParams;
+    return res(ctx.json(mockProjects));
+  })
 );
 
 beforeAll(() => server.listen());
@@ -42,5 +44,19 @@ describe('projects action creator tests', () => {
     return store
       .dispatch(ProjectActions.getProjects('happydog'))
       .then(() => expect(store.getActions()).toEqual(expectedActions));
+  });
+
+  it('includes a p5 version filter when provided', () => {
+    store = mockStore(initialTestState);
+
+    return store
+      .dispatch(
+        ProjectActions.getProjects('happydog', {
+          p5Version: '1.11.13'
+        })
+      )
+      .then(() => {
+        expect(lastSearchParams.get('p5Version')).toBe('1.11.13');
+      });
   });
 });

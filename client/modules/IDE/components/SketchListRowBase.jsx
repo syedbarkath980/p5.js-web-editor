@@ -100,6 +100,7 @@ const SketchListRowBase = ({
   );
 
   const userIsOwner = user.username === username;
+  const isExamplesList = username === 'p5';
 
   let url = `/${username}/sketches/${sketch.id}`;
   if (username === 'p5') {
@@ -128,6 +129,11 @@ const SketchListRowBase = ({
       <th scope="row">{name}</th>
       <td>{formatDateCell(sketch.createdAt, mobile)}</td>
       <td>{formatDateCell(sketch.updatedAt, mobile)}</td>
+      {isExamplesList && (
+        <td className="sketches-table__version-column">
+          {sketch.p5Version || ''}
+        </td>
+      )}
       <td hidden={!userIsOwner || mobile}>
         <VisibilityDropdown
           sketch={sketch}
@@ -169,6 +175,7 @@ SketchListRowBase.propTypes = {
     name: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
     updatedAt: PropTypes.string.isRequired,
+    p5Version: PropTypes.string,
     visibility: PropTypes.string
   }).isRequired,
   username: PropTypes.string.isRequired,

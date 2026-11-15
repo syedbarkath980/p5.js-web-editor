@@ -23,6 +23,7 @@ const makeProjects = (prefix, count) =>
     name: `${prefix}-sketch-${i + 1}`,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    p5Version: '2.3.4',
     visibility: 'public'
   }));
 
@@ -47,6 +48,24 @@ const server = setupServer(
           totalProjects: 54,
           limit,
           hasPagination: true
+        }
+      })
+    );
+  }),
+  rest.get('/p5/projects', (req, res, ctx) => {
+    requestCount += 1;
+    lastSearchParams = req.url.searchParams;
+
+    return res(
+      ctx.status(200),
+      ctx.json({
+        projects: makeProjects('p5', 10),
+        metadata: {
+          page: 1,
+          totalPages: 1,
+          totalProjects: 10,
+          limit: 10,
+          hasPagination: false
         }
       })
     );
@@ -147,6 +166,7 @@ describe('<SketchList />', () => {
     const createdHeader = screen.getByRole('columnheader', {
       name: /SketchList\.HeaderCreatedAt/i
     });
+
     const createdSortButton = within(createdHeader).getByRole('button');
 
     fireEvent.click(createdSortButton);
@@ -154,6 +174,22 @@ describe('<SketchList />', () => {
     await waitFor(() => {
       expect(requestCount).toBeGreaterThan(before);
       expect(lastSearchParams.get('sortField')).toBe('createdAt');
+    });
+  });
+
+  it('clicking the version header sorts example sketches by version', async () => {
+    reduxRender(<SketchList username="p5" />, {
+      preloadedState: initialTestState
+    });
+    await screen.findByText('p5-sketch-1');
+
+    const versionHeader = screen.getByRole('columnheader', {
+      name: /SketchList\.HeaderP5Version/i
+    });
+    fireEvent.click(within(versionHeader).getByRole('button'));
+
+    await waitFor(() => {
+      expect(lastSearchParams.get('sortField')).toBe('p5Version');
     });
   });
 

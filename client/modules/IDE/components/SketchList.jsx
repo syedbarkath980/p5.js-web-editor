@@ -113,7 +113,7 @@ const SketchList = ({
   };
 
   const getButtonLabel = useCallback(
-    (fieldName, displayName) => {
+    (fieldName, displayName, className) => {
       const { field, direction } = sorting;
       if (field !== fieldName) {
         return field === 'name'
@@ -128,7 +128,7 @@ const SketchList = ({
   );
 
   const renderFieldHeader = useCallback(
-    (fieldName, displayName) => {
+    (fieldName, displayName, className) => {
       const { field, direction } = sorting;
       const headerClass = classNames({
         'sketches-table__header': true,
@@ -136,7 +136,7 @@ const SketchList = ({
       });
       const buttonLabel = getButtonLabel(fieldName, displayName);
       return (
-        <th scope="col">
+        <th scope="col" className={className}>
           <button
             className="sketch-list__sort-button"
             onClick={() => toggleDirectionForField(fieldName)}
@@ -165,6 +165,7 @@ const SketchList = ({
   );
 
   const userIsOwner = user.username === username;
+  const isExamplesList = username === 'p5';
 
   return (
     <>
@@ -194,6 +195,12 @@ const SketchList = ({
                     context: mobile ? 'mobile' : ''
                   })
                 )}
+                {isExamplesList &&
+                  renderFieldHeader(
+                    'p5Version',
+                    t('SketchList.HeaderP5Version'),
+                    'sketches-table__version-column'
+                  )}
                 {userIsOwner &&
                   renderFieldHeader('visibility', t('Visibility.Label'))}
                 <th scope="col"></th>
@@ -251,6 +258,7 @@ SketchList.propTypes = {
       name: PropTypes.string.isRequired,
       createdAt: PropTypes.string.isRequired,
       updatedAt: PropTypes.string.isRequired,
+      p5Version: PropTypes.string,
       visibility: PropTypes.string
     })
   ).isRequired,

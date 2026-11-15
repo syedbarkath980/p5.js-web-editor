@@ -229,6 +229,13 @@
   }
 }
 
+.sketches-table__version-column {
+  min-width: #{math.div(7, $base-font-size)}rem;
+  padding-left: #{math.div(16, $base-font-size)}rem !important;
+  padding-right: #{math.div(16, $base-font-size)}rem;
+  white-space: nowrap;
+}
+
 .sketches-table thead th:nth-child(1) {
   padding-left: #{math.div(12, $base-font-size)}rem;
 }

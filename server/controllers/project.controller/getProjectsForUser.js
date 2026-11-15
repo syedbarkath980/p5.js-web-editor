@@ -10,7 +10,7 @@ import { toApi as toApiProjectObject } from '../../domain-objects/Project';
 const createCoreHandler = (mapProjectsToResponse) => async (req, res) => {
   try {
     const { username } = req.params;
-    const { page, limit, sortField, sortDir, q } = req.query;
+    const { page, limit, sortField, sortDir, q, p5Version } = req.query;
 
     if (!username) {
       return res.status(422).json({ message: 'Username not provided' });
@@ -38,6 +38,10 @@ const createCoreHandler = (mapProjectsToResponse) => async (req, res) => {
       filter.name = { $regex: escaped, $options: 'i' };
     }
 
+    if (p5Version && p5Version.trim()) {
+      filter.p5Version = p5Version.trim();
+    }
+
     const usePagination = page !== undefined && limit !== undefined;
 
     const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
@@ -47,6 +51,7 @@ const createCoreHandler = (mapProjectsToResponse) => async (req, res) => {
       'name',
       'createdAt',
       'updatedAt',
+      'p5Version',
       'visibility'
     ]);
     const safeSortField = allowedSortFields.has(sortField)
@@ -55,7 +60,7 @@ const createCoreHandler = (mapProjectsToResponse) => async (req, res) => {
 
     const query = Project.find(filter)
       .sort({ [safeSortField]: dir, _id: dir })
-      .select('name files id createdAt updatedAt visibility');
+      .select('name files id createdAt updatedAt visibility p5Version');
 
     if (usePagination) {
       query.skip((parsedPage - 1) * parsedLimit).limit(parsedLimit);

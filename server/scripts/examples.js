@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import objectID from 'bson-objectid';
 import shortid from 'shortid';
 import { defaultCSS, defaultHTML } from '../domain-objects/createDefaultFiles';
+import { currentP5Version } from '../../common/p5Versions';
 import { User } from '../models/user';
 import Project from '../models/project';
 
@@ -11,6 +12,7 @@ const clientId = process.env.GITHUB_ID;
 const clientSecret = process.env.GITHUB_SECRET;
 
 const mongoConnectionString = process.env.MONGO_URL;
+const legacyP5Version = '1.11.13';
 
 mongoose.connect(mongoConnectionString, {
   useNewUrlParser: true,
@@ -230,6 +232,7 @@ async function createProjectsInP5user(projectsInAllCategories, user) {
           if (noNumberprojectName === 'Instance Mode: Instance Container ') {
             newProject = new Project({
               name: project.projectName,
+              p5Version: legacyP5Version,
               user: user._id,
               files: [
                 {
@@ -271,6 +274,7 @@ async function createProjectsInP5user(projectsInAllCategories, user) {
           } else {
             newProject = new Project({
               name: project.projectName,
+              p5Version: legacyP5Version,
               user: user._id,
               files: [
                 {
@@ -403,6 +407,7 @@ async function importV2Examples(user) {
 
               const newProject = new Project({
                 name: projectName,
+                p5Version: currentP5Version,
                 user: user._id,
                 files: [
                   {
@@ -423,9 +428,7 @@ async function importV2Examples(user) {
                   },
                   {
                     name: 'index.html',
-                    // NOTE: defaultHTML() called without version for now
-                    // TODO: update to explicit v2 version in other existing PR
-                    content: defaultHTML(),
+                    content: defaultHTML({ version: currentP5Version }),
                     id: b,
                     _id: b,
                     fileType: 'file',
